@@ -1,2 +1,5 @@
 const EXPRESS = require('express');
-const app = EXPRESS();
+const APP = EXPRESS();
+const CORS = require('cors');
+
+APP.use(CORS());
