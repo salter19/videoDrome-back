@@ -1,5 +1,7 @@
 CREATE DATABASE videoDB;
 USE videoDB;
+
+-- Create and initially populate: categories, genres and formats
 DROP TABLE IF EXISTS categories, genres, formats;
 
 CREATE TABLE categories (
@@ -13,7 +15,8 @@ VALUES
   ('movie')
   , ('music')
   , ('documentary')
-  , ('tv');
+  , ('tv')
+;
 
 INSERT INTO categories (title)
 VALUES ('musical');
@@ -28,7 +31,8 @@ INSERT INTO formats (title)
 VALUES    
   ('dvd')
   , ('blueray')
-  , ('vhs');
+  , ('vhs')
+;
 
 CREATE TABLE genres (
   id          INT         NOT NULL      AUTO_INCREMENT
@@ -58,14 +62,17 @@ VALUES
   , ('sports')
   , ('historical')
   , ('animation')
-  , ('war');
+  , ('war')
+;
 
 INSERT INTO genres (title, is_music)
 VALUES 
   ('metal', true)
   , ('pop', true)
-  , ('rock', true);
+  , ('rock', true)
+;
 
+-- create and initially populate tables: subtitles
 CREATE TABLE subtitles (
   id      INT           NOT NULL      AUTO_INCREMENT
   , title VARCHAR(10)   UNIQUE
@@ -76,4 +83,12 @@ INSERT INTO subtitles (title)
 VALUES
   ('fi')
   , ('en')
-  , ('-');
+  , ('-')
+;
+
+DROP TABLE IF EXISTS crew_titles;
+CREATE TABLE crew_titles (
+  id        INT           NOT NULL      AUTO_INCREMENT
+  , title   VARCHAR(75)   NOT NULL
+  , PRIMARY KEY (id)
+);

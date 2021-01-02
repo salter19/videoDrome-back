@@ -1,0 +1,64 @@
+Project videoDromeDBdocs {
+  database_type: 'mysql'
+  Note: 'DB for Anssi\'s video store.'
+}
+
+Table categories {
+  id integer [pk, not null, increment]
+  title varchar(50) [unique, not null] 
+}
+
+Table formats {
+  id integer [pk, not null, increment]  
+  title varchar(50) [unique, not null, default: 'dvd'] 
+}
+
+Table genres {
+  id integer [pk, not null, increment] 
+  title varchar(50) [unique, not null]
+  is_music boolean [default: false] 
+}
+
+Table subtitles as SUBS {
+  id integer [pk, not null, increment]
+  title varchar(10) [not null, unique]
+}
+
+Table crew_titles as CT {
+  id integer [pk, not null, increment]
+  title varchar(75) [not null]
+}
+
+Table crew_members {
+  id integer [pk, not null, increment]
+  movie_id integer [ref: > movies.id, not null]
+  crew_title integer [ref: > CT.id, not null]
+  last_name varchar(100)
+  first_name varchar(100)
+}
+
+Table countries {
+  id integer [pk, not null, increment]
+  name varchar(255) [not null]
+}
+
+Table distributors as DIST {
+  id integer [pk, not null, increment]
+  name varchar(255) [not null]
+}
+
+Table movies {
+  id integer [pk, not null, increment]
+  category integer [ref: > categories.id, not null]
+  name varchar(255) [not null]
+  release_year integer [not null]
+  country_of_origin integer [ref: > countries.id, not null]
+  country_of_origin_2 integer [ref: > countries.id]
+  distributor integer [ref: > DIST.id]
+  subtitle integer [ref: > SUBS.id, not null]
+  subtitle_2 integer [ref: > SUBS.id]
+  genre integer [ref: > genres.id, not null]
+  genre_2 integer [ref: > genres.id]
+  format_1 integer [ref: > formats.id, not null]
+  format_2 integer [ref: > formats.id]
+}
