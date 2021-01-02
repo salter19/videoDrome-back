@@ -10,9 +10,14 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "gzip": "^0.1.0",
     "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1",
+    "node-gzip": "^1.1.2",
+    "nodemon": "^2.0.6",
     "path": "^0.12.7"
   },
   "scripts": {

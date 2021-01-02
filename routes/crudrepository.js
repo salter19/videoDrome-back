@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const path = require('path');
 const config = require(path.join(__dirname, './../dbml/config.js'));
+const MovieCard = require(path.join(__dirname, './../dbFeed/movie.js'))
 
 let connection = null;
 
@@ -13,6 +14,8 @@ const status = {
   userErr: 400,
   notFound: 404
 }
+
+const serverError = status.serverErr + ' - no connection.';
 
 const connectionFunctions = {
 
@@ -39,10 +42,10 @@ const connectionFunctions = {
   close: () => {
     const func = (resolve, reject) => {
       try {
-        connection ? reject(status.serverErr + ' - No connection.')
+        connection ? reject(serverError)
         :connection.end(resolve(status.ok + ' - connection closed.'));
       } catch (error) {
-        reject(status.serverErr + ' - No connection to close.')
+        reject(serverError)
       }
     }
     return new Promise(func);
@@ -66,10 +69,26 @@ const connectionFunctions = {
           
         }
       }
-      connection ? innerFunc() : reject(status.serverErr + ' - no connection.')
+      connection ? innerFunc() : reject(serverError)
+    }
+    return new Promise(func);
+  },
+
+  createMovieCard: (obj) => {
+
+    const func = (resolve, reject) => {
+      const innerFunc = async () => {
+        const card = await new MovieCard(obj);
+        console.log(card.getCard());
+        if (card) {
+          resolve('Card done!');
+        }
+      }
+      connection ? innerFunc() : reject(serverError);
     }
     return new Promise(func);
   }
+
 }
 
 module.exports = connectionFunctions;
