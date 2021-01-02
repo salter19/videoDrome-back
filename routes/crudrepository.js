@@ -34,7 +34,21 @@ const connectionFunctions = {
       }
     }
     return new Promise(func)
-  }
+  },
+
+  close: () => {
+    const func = (resolve, reject) => {
+      try {
+        connection ? reject(status.serverErr + ' - No connection.')
+        :connection.end(resolve(status.ok + ' - connection closed.'));
+      } catch (error) {
+        reject(status.serverErr + ' - No connection to close.')
+      }
+    }
+    return new Promise(func);
+  },
+
+  
 }
 
 module.exports = connectionFunctions;
