@@ -48,7 +48,28 @@ const connectionFunctions = {
     return new Promise(func);
   },
 
-  
+  findAllCategories: () => {
+    const func = (resolve, reject) => {
+      const innerFunc = async () => {
+        const sql = 'SELECT * FROM categories';
+
+        const success = (result) => {
+          result.length > 0 
+          ? resolve(JSON.parse(JSON.stringify(result)))
+          : reject(status.notFound + ' - not found.');
+        }
+        try {
+          connection.query(sql, (err, res) => {
+            err ? reject(err) : success(res);
+          })
+        } catch (error) {
+          
+        }
+      }
+      connection ? innerFunc() : reject(status.serverErr + ' - no connection.')
+    }
+    return new Promise(func);
+  }
 }
 
 module.exports = connectionFunctions;
