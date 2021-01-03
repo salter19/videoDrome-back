@@ -79,7 +79,7 @@ const connectionFunctions = {
     const func = (resolve, reject) => {
       const innerFunc = async () => {
         const card = await new MovieCard(obj);
-        resolve(status.created + ' -  card created: ' + card._name + ' ');
+        resolve(card);
       }
       connection ? innerFunc() : reject(serverError);
     }
