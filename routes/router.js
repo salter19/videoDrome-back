@@ -32,8 +32,9 @@ router.get('/omdb/', async (req, res) => {
 router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   try {
     const result = await omdb.connect(req.params.title, req.params.year);
-    DB.createMovieCard(result);
-    res.send('Done!');
+    const movieCard = await DB.createMovieCard(result);
+    
+    res.send(movieCard);
   } catch (error) {
     res.send(error);
   }
