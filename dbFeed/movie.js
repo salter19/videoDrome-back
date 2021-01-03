@@ -1,16 +1,17 @@
 class Movie {
   constructor(data) {
-    this._name = data.Title;
-    this._category = data.Type;
-    this._genres = data.Genre.split(', ');
-    this._year = data.Year;
-    this._director = data.Director.split(', ');
-    this._country = data.Country.split(', ');
-    this._sub = '';
-    this._sub2 = '';
-    this._format = '';
-    this._format2 = '';
-    this._actors = data.Actors.split(', ');
+    this.name = data.Title;
+    this.category = data.Type;
+    this.genres = data.Genre.split(', ');
+    this.year = data.Year;
+    this.director = data.Director.split(', ');
+    this.country = data.Country.split(', ');
+    this.sub = '';
+    this.sub2 = '';
+    this.format = '';
+    this.format2 = '';
+    this.actors = data.Actors.split(', ');
+    this.imdbID = data.imdbID;
   }
 
   getCard() {
