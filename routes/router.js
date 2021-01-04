@@ -8,6 +8,17 @@ const omdb = require(path.join(__dirname, './connectOMDB.js'));
 const router = EXPRESS.Router();
 router.use(EXPRESS.json());
 
+// helper func for cardCreation
+const createCard = async(res, result) => {
+
+  if (result.Title.length) {
+    const movieCard = await DB.createMovieCard(result);
+    res.send(movieCard);
+  } else {
+    res.send('404 - movie not found');
+  }
+}
+
 // get all category entries from database
 router.get('/categories/', async (req, res) => {
   try {
@@ -18,27 +29,22 @@ router.get('/categories/', async (req, res) => {
   }
 });
 
-// get omdb stuff
-router.get('/omdb/', async (req, res) => {
+
+router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
   try {
-    const result = await omdb.connect();
-    // const movie = new Movie(result);
-    res.send(result);
-  } catch (err) {
-    res.send(err);
+    const result = await omdb.connectTitle(req.params.title);
+    createCard(res, result);
+
+  } catch (error) {
+    res.send(error);
   }
 });
 
 router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   try {
     const result = await omdb.connect(req.params.title, req.params.year);
+    createCard(res, result);
 
-    if (result.Title.length) {
-      const movieCard = await DB.createMovieCard(result);
-      res.send(movieCard);
-    } else {
-      res.send('404 - movie not found')
-    }
   } catch (error) {
     res.send(error);
   }
