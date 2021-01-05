@@ -9,9 +9,7 @@ const splitter = (data) => {
 
 class Movie {
   constructor(data, isOMDB) {
-    console.log('coming from omdb? ' + isOMDB)
     isOMDB ? this.setFromOMDB(data) : this.setFromApp(data);
-
   }
 
   setFromOMDB(data) {
