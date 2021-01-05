@@ -48,6 +48,17 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   } catch (error) {
     res.send(error);
   }
-})
+});
+
+router.post('/', async(req, res) => {
+  try {
+    const result = await DB.saveToDatabase(req.body);
+
+    result ? res.send('201 - created!') : res.send('500 - error occured');
+    
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 module.exports = router;

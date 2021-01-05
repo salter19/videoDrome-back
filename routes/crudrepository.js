@@ -84,9 +84,22 @@ const connectionFunctions = {
       connection ? innerFunc() : reject(serverError);
     }
     return new Promise(func);
-  }
+  },
 
-  
+  saveToDatabase: (article) => {
+
+    const func = (resolve, reject) => {
+
+      const innerFunc = async() => {
+        console.log("saving?");
+        console.log(article);
+        resolve(article);
+      }
+
+      connection ? innerFunc() : reject(serverError);
+    }
+    return new Promise(func);
+  }
 
 }
 
