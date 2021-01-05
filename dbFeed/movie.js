@@ -6,7 +6,7 @@ class Movie {
     this.year = data.Year;
     this.director = data.Director.split(', ');
     this.country = data.Country.split(', ');
-    this.sub = '';
+    this.sub = data.Subs.split(', ');
     this.format = '';
     this.format2 = '';
     this.actors = data.Actors.split(', ');
