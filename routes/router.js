@@ -12,7 +12,8 @@ router.use(EXPRESS.json());
 const createCard = async(res, result) => {
 
   if (result.Title.length) {
-    const movieCard = await DB.createMovieCard(result);
+    result.Subs = '-';
+    const movieCard = await DB.createMovieCard(result, true);
     res.send(movieCard);
   } else {
     res.send('404 - movie not found');
@@ -52,7 +53,12 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
 
 router.post('/', async(req, res) => {
   try {
-    const result = await DB.saveToDatabase(req.body);
+    const card = await DB.createMovieCard(req.body, false);
+    console.log('... card: ...')
+    console.log(card)
+    console.log('...')
+    
+    const result = await DB.saveToDatabase(card);
 
     result ? res.send('201 - created!') : res.send('500 - error occured');
     
