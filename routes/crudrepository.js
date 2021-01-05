@@ -74,12 +74,13 @@ const connectionFunctions = {
     return new Promise(func);
   },
 
-  createMovieCard: (obj) => {
+  createMovieCard: (obj, isOMDB) => {
 
     const func = (resolve, reject) => {
       const innerFunc = async () => {
-        const card = await new MovieCard(obj);
-        resolve(card);
+        const card = await new MovieCard(obj, isOMDB);
+        const result = card.getCard();
+        resolve(result);
       }
       connection ? innerFunc() : reject(serverError);
     }
@@ -91,8 +92,6 @@ const connectionFunctions = {
     const func = (resolve, reject) => {
 
       const innerFunc = async() => {
-        console.log("saving?");
-        console.log(article);
         resolve(article);
       }
 
