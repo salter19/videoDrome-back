@@ -27,7 +27,6 @@ class Movie {
   }
 
   setFromApp(data) {
-
     this.name = data.name;
     this.category = data.category;
     this.genres = splitter(data.genres);
@@ -42,8 +41,6 @@ class Movie {
   }
 
   getCard() {
-    console.log('heres return')
-    console.log(this)
     return this;
   }
 
