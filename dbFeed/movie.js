@@ -3,7 +3,6 @@ const splitter = (data) => {
     const re = /\s*(?:,|$)\s*/;
 
     return data.split(re);
-
   }
 }
 
