@@ -11,10 +11,16 @@ router.use(EXPRESS.json());
 // helper func for cardCreation
 const createCard = async(res, result) => {
 
-  if (result.Title.length) {
+  if (result.Title) {
     result.Subs = '-';
-    const movieCard = await DB.createMovieCard(result, true);
-    res.send(movieCard);
+    result.Formats = 'dvd';
+
+    try {   
+      const movieCard = await DB.createMovieCard(result, true);
+      res.send(movieCard);
+    } catch (error) {
+      res.send(error);
+    }
   } else {
     res.send('404 - movie not found');
   }
@@ -34,7 +40,9 @@ router.get('/categories/', async (req, res) => {
 router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
   try {
     const result = await omdb.connectTitle(req.params.title);
-    createCard(res, result);
+    const card = await createCard(res, result);
+
+    card ? res.send('card created') : res.send('400 - could not create card');
 
   } catch (error) {
     res.send(error);
@@ -44,7 +52,9 @@ router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
 router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   try {
     const result = await omdb.connect(req.params.title, req.params.year);
-    createCard(res, result);
+    const card = await createCard(res, result);
+    
+    card ? res.send('card created') : res.send('400 - could not create card');
 
   } catch (error) {
     res.send(error);
@@ -53,12 +63,7 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
 
 router.post('/', async(req, res) => {
   try {
-    const card = await DB.createMovieCard(req.body, false);
-    console.log('... card: ...')
-    console.log(card)
-    console.log('...')
-    
-    const result = await DB.saveToDatabase(card);
+    const result = await DB.saveToDatabase(req.body);
 
     result ? res.send('201 - created!') : res.send('500 - error occured');
     
