@@ -8,7 +8,7 @@ const router = EXPRESS.Router();
 router.use(EXPRESS.json());
 
 // helper func for cardCreation
-const createCard = async(res, result) => {
+const createCard = async(result) => {
 
   if (result.Title) {
     result.Subs = '-';
@@ -16,12 +16,12 @@ const createCard = async(res, result) => {
 
     try {   
       const movieCard = await DB.createMovieCard(result, true);
-      res.send(movieCard);
+      return movieCard;
     } catch (error) {
-      res.send(error);
+      return error;
     }
   } else {
-    res.send('404 - movie not found');
+    return '404 - movie not found';
   }
 }
 
