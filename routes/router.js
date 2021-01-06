@@ -39,7 +39,8 @@ router.get('/categories/', async (req, res) => {
 router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
   try {
     const result = await omdb.connectTitle(req.params.title);
-    await createCard(res, result);
+    const card = await createCard(result);
+    res.send(card);
 
   } catch (error) {
     res.send(error);
@@ -49,8 +50,8 @@ router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
 router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   try {
     const result = await omdb.connect(req.params.title, req.params.year);
-    await createCard(res, result);
-
+    const card = await createCard(res, result);
+    res.send(card);
   } catch (error) {
     res.send(error);
   }
