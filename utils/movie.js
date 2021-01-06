@@ -1,10 +1,4 @@
-const splitter = (data) => {
-  if (typeof data === 'string') {
-    const re = /\s*(?:,|$)\s*/;
-
-    return data.split(re);
-  }
-}
+const splitter = require('./splitter');
 
 class Movie {
   constructor(data, isOMDB) {
