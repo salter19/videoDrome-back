@@ -1,7 +1,9 @@
+const { error } = require('console');
 const mysql = require('mysql');
 const path = require('path');
 const config = require(path.join(__dirname, './../dbml/config.js'));
-const MovieCard = require(path.join(__dirname, './../dbFeed/movie.js'))
+const MovieCard = require(path.join(__dirname, './../utils/movie.js'));
+const splitter = require('./../utils/splitter');
 
 let connection = null;
 
@@ -16,6 +18,40 @@ const status = {
 }
 
 const serverError = status.serverErr + ' - no connection.';
+
+const getID = async(table, col, item) => {
+  const id = await connectionFunctions.getItemId(table, col, item);
+  return id[0].id; 
+}
+
+const getIDs = async(table, col, items) => {
+
+  const tmp = splitter(items);
+
+  const getMany = async() => {
+    const res = await mapArr(tmp, table, col);
+    return res;    
+  }
+
+  const getOne = async() => {
+    const res =  await mapArr(tmp, table, col);
+    return res;
+  }
+
+  const arr =  items.length > 1 ? await getMany() : await getOne();
+  return arr;
+};
+
+const mapArr = async (arr, table, col) => {
+
+  const res = [];
+
+  for (const item of arr) {
+    const id = await connectionFunctions.getItemId(table, col, item);
+    res.push(id[0].id);
+  }
+  return res;
+};
 
 const connectionFunctions = {
 
@@ -66,7 +102,7 @@ const connectionFunctions = {
             err ? reject(err) : success(res);
           })
         } catch (error) {
-          
+          reject(error);
         }
       }
       connection ? innerFunc() : reject(serverError)
@@ -93,10 +129,35 @@ const connectionFunctions = {
     const func = (resolve, reject) => {
 
       const innerFunc = async() => {
+        const title = 'title';
+        const catID = await getID('categories', title, article.category).catch(error);
+        const formatIDs = await getIDs('formats', title, article.format).catch(error);
+        
         resolve(article);
       }
 
       connection ? innerFunc() : reject(serverError);
+    }
+    return new Promise(func);
+  }, 
+
+  getItemId: (table, col, item) => {
+    const func = async(resolve, reject) => {
+      const sql = `SELECT id FROM ${table} WHERE ${col} = ?`
+
+      const success = (result) => {
+        result.length > 0 
+        ? resolve(JSON.parse(JSON.stringify(result)))
+        : reject(status.notFound + ' - not found.');
+      }
+
+      try {
+        connection.query(sql, item, (err, res) => {
+          err ? reject(err) : success(res);
+        })
+      } catch (error) {
+        reject(error);
+      }
     }
     return new Promise(func);
   }
