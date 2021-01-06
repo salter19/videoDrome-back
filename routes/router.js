@@ -2,7 +2,6 @@ const EXPRESS = require('express');
 const path = require('path');
 const DB = require(path.join(__dirname, './crudrepository.js'));
 const omdb = require(path.join(__dirname, './connectOMDB.js'));
-// const Movie = require(path.join(__dirname, './../dbFeed/movie.js'));
 
 // create router
 const router = EXPRESS.Router();
