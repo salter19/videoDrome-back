@@ -133,6 +133,7 @@ const connectionFunctions = {
         const catID = await getID('categories', title, article.category).catch(error);
         const formatIDs = await getIDs('formats', title, article.format).catch(error);
         console.log(formatIDs)
+        console.log(catID)
         resolve(article);
       }
 
