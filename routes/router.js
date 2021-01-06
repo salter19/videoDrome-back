@@ -18,7 +18,7 @@ const createCard = async(result) => {
       const movieCard = await DB.createMovieCard(result, true);
       return movieCard;
     } catch (error) {
-      return error;
+      return '404 - movie not found';
     }
   } else {
     return '404 - movie not found';
