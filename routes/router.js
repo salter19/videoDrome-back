@@ -61,6 +61,7 @@ router.post('/', async(req, res) => {
   try {
     const result = await DB.saveToDatabase(req.body);
 
+    console.log(result)
     result ? res.send('201 - created!') : res.send('500 - error occured');
     
   } catch (error) {
