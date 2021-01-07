@@ -29,6 +29,7 @@ const getIDs = async(table, col, items) => {
 
   if (typeof items === 'string') {
     items = splitter(items);
+    
   }
 
   const getMany = async() => {
@@ -151,8 +152,14 @@ const connectionFunctions = {
         const genresIDs = await getIDs('genres', title, article.genres).catch(error);
         const countryIDs = await getIDs('countries', title, article.country).catch(error);
         const subIDs = await getIDs('subtitles', title, article.sub).catch(error);
+        const validSubIDs = subIDs.map((e) => {
+          if (e < 1 || e > 2) {
+            return 3;
+          }
+          return e;
+        })
         
-        console.log(subIDs)
+        console.log(validSubIDs)
         resolve(article);
       }
 
