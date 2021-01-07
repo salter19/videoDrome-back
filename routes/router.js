@@ -57,6 +57,23 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   }
 });
 
+router.get('/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
+  try {
+    const result = await DB.getInsertFromDB(req.params.title, req.params.year);
+    res.send(result);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+// router.get('/title:([A-Za-z0-9_%]+)', async(req, res) => {
+//   try {
+//     const result = await DB.g
+//   } catch (error) {
+//     res.sendStatus(error);
+//   }
+// })
+
 router.post('/', async(req, res) => {
   try {
     const result = await DB.saveToDatabase(req.body);
