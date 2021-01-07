@@ -19,8 +19,7 @@ class Movie {
     this.director = splitter(data.Director);
     this.country = splitter(data.Country);
     this.sub = splitter(data.Subs)
-    this.format = '';
-    this.format2 = '';
+    this.format = splitter(data.Formats);
     this.actors = splitter(data.Actors);
     this.imdbID = data.imdbID;
   }
@@ -33,8 +32,7 @@ class Movie {
     this.director = splitter(data.director);
     this.country = splitter(data.country);
     this.sub = splitter(data.sub);
-    this.format = data.format;
-    this.format2 = data.format2;
+    this.format = splitter(data.Formats);
     this.actors = splitter(data.actors);
     this.imdbID = data.imdbID;
   }
