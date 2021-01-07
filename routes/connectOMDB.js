@@ -33,10 +33,10 @@ const connectOMDB = {
   connectTitle: (title) => {
     const func = async (resolve, reject) => {
       try {
-        console.log('connecting to omdb with title: ' + title);
         const _url = baseUrl + `&t=${title}`;
         const response = await axios.get(_url);
         const data = await response.data;
+
         resolve(data);
       } catch (error) {
         reject(status.notFound + ' - not found.')
