@@ -237,14 +237,15 @@ const connectionFunctions = {
   },
 
   getInsertFromDB: (title, year) => {
-    const sql = `SELECT * FROM movies WHERE name = ? AND title = ?`;
+    
+    const sql = `SELECT * FROM movies WHERE name = ? AND release_year = ?`;
 
     const func = (resolve, reject) => {
       const innerFunc = () => {
 
         try {
           connection.query(sql, [title, year], (err, res) => {
-            err ? reject(status.notFound) : resolve(res);
+            err ? reject(status.notFound + ' - insert not found. ') : resolve(JSON.parse(JSON.stringify(res[0])));
           });
         } catch (error) {
           reject(status.userErr + ' - Invalid input, could not retrieve data.');
@@ -253,7 +254,11 @@ const connectionFunctions = {
       connection ? innerFunc() : reject(serverError);
     }
     return new Promise(func);
-  }
+  },
+
+  // getInsertFromDBByTitle: (title) => {
+  //   const sql =
+  // }
 
 }
 
