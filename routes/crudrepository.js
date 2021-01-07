@@ -141,8 +141,6 @@ const connectionFunctions = {
   },
 
   saveToDatabase: (article) => {
-
-    console.log(article)
     const func = (resolve, reject) => {
 
       const innerFunc = async() => {
