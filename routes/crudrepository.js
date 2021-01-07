@@ -1,5 +1,4 @@
 const { error } = require('console');
-const { get } = require('http');
 const mysql = require('mysql');
 const path = require('path');
 const config = require(path.join(__dirname, './../dbml/config.js'));
@@ -38,6 +37,7 @@ const getIDs = async(table, col, items) => {
   }
 
   const getOne = async() => {
+    items.push('-');
     const res =  await mapArr(items, table, col);
     return res;
   }
@@ -146,9 +146,10 @@ const connectionFunctions = {
 
       const innerFunc = async() => {
         const title = 'title';
+        const releaseYear = Number(article.year);
         const catID = await getID('categories', title, article.category).catch(error);
         const formatIDs = await getIDs('formats', title, article.format).catch(error);
-        const genresIDs = await getIDs('genres', title, article.genres).catch(error);
+        const genreIDs = await getIDs('genres', title, article.genres).catch(error);
         const countryIDs = await getIDs('countries', title, article.country).catch(error);
         const subIDs = await getIDs('subtitles', title, article.sub).catch(error);
         const validSubIDs = subIDs.map((e) => {
@@ -158,6 +159,29 @@ const connectionFunctions = {
           return e;
         })
         
+        const valueArr = [
+          catID, article.name, releaseYear,
+          countryIDs[0], countryIDs[1],
+          subIDs[0], subIDs[1],
+          genreIDs[0], genreIDs[1],
+          formatIDs[0], formatIDs[1]
+        ];
+        const marks = '?, '.repeat(10) + '?';
+        
+        const sql = `INSERT INTO movies ` +
+                    `(category, name, release_year, country_of_origin, country_of_origin_2,` +
+                    `subtitle, subtitle_2, genre, genre_2, format, format_2)` +
+                    `VALUES ( ${marks} )`;
+        try {
+          connection.query(sql, valueArr, (err, res) => {
+            err ? 
+              reject(status.userErr + ' - Invalid value, could not save movie')
+              : resolve(res.insertId);
+          });
+        } catch (error) {
+          reject(status.userErr + ' - Invalid value, movie was not saved.\n' + error);
+          
+        }
         console.log(validSubIDs)
         resolve(article);
       }
