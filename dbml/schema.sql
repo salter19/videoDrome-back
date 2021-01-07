@@ -89,3 +89,5 @@ ALTER TABLE `movies` ADD FOREIGN KEY (`genre_2`) REFERENCES `genres` (`id`);
 ALTER TABLE `movies` ADD FOREIGN KEY (`format_1`) REFERENCES `formats` (`id`);
 
 ALTER TABLE `movies` ADD FOREIGN KEY (`format_2`) REFERENCES `formats` (`id`);
+
+DROP TABLE IF EXISTS crew_members, movies, genres;
