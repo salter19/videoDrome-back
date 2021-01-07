@@ -13,7 +13,7 @@ const createCard = async(result) => {
   if (result.Title) {
     result.Subs = '-';
     result.Formats = 'dvd';
-
+    
     try {   
       const movieCard = await DB.createMovieCard(result, true);
       return movieCard;

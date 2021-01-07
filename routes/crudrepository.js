@@ -26,19 +26,21 @@ const getID = async(table, col, item) => {
 
 const getIDs = async(table, col, items) => {
 
-  const tmp = splitter(items);
+  if (typeof items === 'string') {
+    items = splitter(items);
+  }
 
   const getMany = async() => {
-    const res = await mapArr(tmp, table, col);
+    const res = await mapArr(items, table, col);
     return res;    
   }
 
   const getOne = async() => {
-    const res =  await mapArr(tmp, table, col);
+    const res =  await mapArr(items, table, col);
     return res;
   }
 
-  const arr =  items.length > 1 ? await getMany() : await getOne();
+  const arr =  await items.length > 1 ? await getMany() : await getOne();
   return arr;
 };
 
@@ -132,6 +134,7 @@ const connectionFunctions = {
         const title = 'title';
         const catID = await getID('categories', title, article.category).catch(error);
         const formatIDs = await getIDs('formats', title, article.format).catch(error);
+        console.log('at crud / saveToDatabase:')
         console.log(formatIDs)
         console.log(catID)
         resolve(article);
