@@ -163,7 +163,7 @@ const connectionFunctions = {
         const valueArr = [
           catID, article.name, releaseYear,
           countryIDs[0], countryIDs[1],
-          subIDs[0], subIDs[1],
+          validSubIDs[0], validSubIDs[1],
           genreIDs[0], genreIDs[1],
           formatIDs[0], formatIDs[1]
         ];
@@ -183,7 +183,6 @@ const connectionFunctions = {
           reject(status.userErr + ' - Invalid value, movie was not saved.\n' + error);
           
         }
-        console.log(validSubIDs)
         resolve(article);
       }
 
