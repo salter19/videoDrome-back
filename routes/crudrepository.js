@@ -145,12 +145,12 @@ const connectionFunctions = {
 
       const innerFunc = async() => {
         const title = 'title';
-        const releaseYear = Number(article.year);
-        const catID = await getID('categories', title, article.category).catch(error);
-        const formatIDs = await getIDs('formats', title, article.format).catch(error);
-        const genreIDs = await getIDs('genres', title, article.genres).catch(error);
-        const countryIDs = await getIDs('countries', title, article.country).catch(error);
-        const subIDs = await getIDs('subtitles', title, article.sub).catch(error);
+        const releaseYear = Number(article.Year);
+        const catID = await getID('categories', title, article.Type).catch(error);
+        const formatIDs = await getIDs('formats', title, article.Formats).catch(error);
+        const genreIDs = await getIDs('genres', title, article.Genre).catch(error);
+        const countryIDs = await getIDs('countries', title, article.Country).catch(error);
+        const subIDs = await getIDs('subtitles', title, article.Subs).catch(error);
         const validSubIDs = subIDs.map((e) => {
           if (e < 1 || e > 2) {
             return 3;
@@ -159,7 +159,7 @@ const connectionFunctions = {
         })
         
         const valueArr = [
-          catID, article.name, releaseYear,
+          catID, article.Title, releaseYear,
           countryIDs[0], countryIDs[1],
           validSubIDs[0], validSubIDs[1],
           genreIDs[0], genreIDs[1],
@@ -243,8 +243,10 @@ const connectionFunctions = {
     const func = (resolve, reject) => {
       const innerFunc = () => {
 
+        
         try {
           connection.query(sql, [title, year], (err, res) => {
+            console.log(JSON.parse(JSON.stringify(res[0])));
             err ? reject(status.notFound + ' - insert not found. ') : resolve(JSON.parse(JSON.stringify(res[0])));
           });
         } catch (error) {
@@ -257,7 +259,7 @@ const connectionFunctions = {
   },
 
   // getInsertFromDBByTitle: (title) => {
-  //   const sql =
+  //   const sql =s
   // }
 
 }
