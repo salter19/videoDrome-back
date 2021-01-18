@@ -59,10 +59,13 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
 
 // check if title AND year match to a movie in YOUR db
 router.get('/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
+  console.log('here')
   try {
+    console.log('getting from ' + req.params.title)
     const result = await DB.getInsertFromDB(req.params.title, req.params.year);
     res.send(result);
   } catch (err) {
+    console.log('something went wrong with db check')
     res.send(err);
   }
 });
