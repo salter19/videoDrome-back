@@ -165,6 +165,8 @@ const connectionFunctions = {
           genreIDs[0], genreIDs[1],
           formatIDs[0], formatIDs[1]
         ];
+
+        console.log(valueArr)
         const marks = '?, '.repeat(10) + '?';
         
         const sql = `INSERT INTO movies ` +
@@ -243,7 +245,6 @@ const connectionFunctions = {
     const func = (resolve, reject) => {
       const innerFunc = () => {
 
-        
         try {
           connection.query(sql, [title, year], (err, res) => {
             console.log(JSON.parse(JSON.stringify(res[0])));
