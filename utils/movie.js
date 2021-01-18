@@ -8,32 +8,19 @@ const splitter = (data) => {
 
 class Movie {
   constructor(data, isOMDB) {
-    isOMDB ? this.setFromOMDB(data) : this.setFromApp(data);
+    isOMDB ? this.setFromOMDB(data) : this.setFromOMDB(data);
   }
 
   setFromOMDB(data) {
-    this.name = data.Title;
-    this.category = data.Type;
-    this.genres = splitter(data.Genre);
-    this.year = data.Year;
-    this.director = splitter(data.Director);
-    this.country = splitter(data.Country);
-    this.sub = splitter(data.Subs)
-    this.format = splitter(data.Formats);
-    this.actors = splitter(data.Actors);
-    this.imdbID = data.imdbID;
-  }
-
-  setFromApp(data) {
-    this.name = data.name;
-    this.category = data.category;
-    this.genres = splitter(data.genres);
-    this.year = data.year;
-    this.director = splitter(data.director);
-    this.country = splitter(data.country);
-    this.sub = splitter(data.sub);
-    this.format = splitter(data.Formats);
-    this.actors = splitter(data.actors);
+    this.Title = data.Title;
+    this.Type = data.Type;
+    this.Genre = splitter(data.Genre);
+    this.Year = data.Year;
+    this.Director = splitter(data.Director);
+    this.Country = splitter(data.Country);
+    this.Subs = splitter(data.Subs)
+    this.Formats = splitter(data.Formats);
+    this.Actors = splitter(data.Actors);
     this.imdbID = data.imdbID;
   }
 
