@@ -243,12 +243,19 @@ const connectionFunctions = {
     const sql = `SELECT * FROM movies WHERE name = ? AND release_year = ?`;
 
     const func = (resolve, reject) => {
+      const hasData = (res) => {
+        if (res.length > 0) {
+          resolve(JSON.parse(JSON.stringify(res[0])));
+        } else {
+          resolve(res);
+        }
+      }
       const innerFunc = () => {
 
         try {
           connection.query(sql, [title, year], (err, res) => {
-            console.log(JSON.parse(JSON.stringify(res[0])));
-            err ? reject(status.notFound + ' - insert not found. ') : resolve(JSON.parse(JSON.stringify(res[0])));
+            console.log(JSON.parse(JSON.stringify(res)));
+            err ? reject(status.notFound + ' - insert not found. ') : hasData(res);
           });
         } catch (error) {
           reject(status.userErr + ' - Invalid input, could not retrieve data.');
