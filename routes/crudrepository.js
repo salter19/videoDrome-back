@@ -14,54 +14,55 @@ const status = {
   ok: 200,
   created: 201,
   userErr: 400,
-  notFound: 404
-}
+  notFound: 404,
+};
 
 const serverError = status.serverErr + ' - no connection.';
 
-const getID = async(table, col, item) => {
+const getID = async (table, col, item) => {
   const id = await connectionFunctions.getItemId(table, col, item);
-  return id[0].id; 
-}
+  return id[0].id;
+};
 
-const getIDs = async(table, col, items) => {
-
+const getIDs = async (table, col, items) => {
   if (typeof items === 'string') {
     items = splitter(items);
-    
   }
 
-  const getMany = async() => {
+  const getMany = async () => {
     const res = await mapArr(items, table, col);
-    return res;    
-  }
-
-  const getOne = async() => {
-    items.push('-');
-    const res =  await mapArr(items, table, col);
     return res;
-  }
+  };
 
-  const arr =  await items.length > 1 ? await getMany() : await getOne();
-  
+  const getOne = async () => {
+    items.push('-');
+    const res = await mapArr(items, table, col);
+    return res;
+  };
+
+  const arr = (await items.length) > 1 ? await getMany() : await getOne();
+
   return arr;
 };
 
 const mapArr = async (arr, table, col) => {
-
   const res = [];
   let newID;
-  let id; 
+  let id;
 
   for (let item of arr) {
     if (table === 'genres' || table === 'formats' || table === 'category') {
       item = item.toLowerCase();
-    } 
-    const idIs = await connectionFunctions.getItemId(table, col, item).catch(error);
-   
+    }
+    const idIs = await connectionFunctions
+      .getItemId(table, col, item)
+      .catch(error);
+
     if (idIs === undefined) {
-      newID = await connectionFunctions.saveNewItem(table, col, item).catch(error);
-      id = newID
+      newID = await connectionFunctions
+        .saveNewItem(table, col, item)
+        .catch(error);
+      id = newID;
     } else {
       id = idIs[0].id;
     }
@@ -71,7 +72,6 @@ const mapArr = async (arr, table, col) => {
 };
 
 const connectionFunctions = {
-
   connect: () => {
     const func = async (resolve, reject) => {
       const openConnection = () => {
@@ -79,28 +79,33 @@ const connectionFunctions = {
           connection = mysql.createPool(config);
           resolve(status.created + ' - Connection created succesfully');
         } catch (error) {
-          reject(status.serverErr + ' - Something went wrong with the connection.');
+          reject(
+            status.serverErr + ' - Something went wrong with the connection.'
+          );
         }
-      }
+      };
 
       try {
-        connection ? reject(status.ok + ' - You are already connected') : openConnection();        
+        connection
+          ? reject(status.ok + ' - You are already connected')
+          : openConnection();
       } catch (error) {
         reject(status.serverErr + ` - No connection.`);
       }
-    }
-    return new Promise(func)
+    };
+    return new Promise(func);
   },
 
   close: () => {
     const func = (resolve, reject) => {
       try {
-        connection ? reject(serverError)
-        :connection.end(resolve(status.ok + ' - connection closed.'));
+        connection
+          ? reject(serverError)
+          : connection.end(resolve(status.ok + ' - connection closed.'));
       } catch (error) {
-        reject(serverError)
+        reject(serverError);
       }
-    }
+    };
     return new Promise(func);
   },
 
@@ -110,136 +115,156 @@ const connectionFunctions = {
         const sql = 'SELECT * FROM categories';
 
         const success = (result) => {
-          result.length > 0 
-          ? resolve(JSON.parse(JSON.stringify(result)))
-          : reject(status.notFound + ' - not found.');
-        }
+          result.length > 0
+            ? resolve(JSON.parse(JSON.stringify(result)))
+            : reject(status.notFound + ' - not found.');
+        };
         try {
           connection.query(sql, (err, res) => {
             err ? reject(err) : success(res);
-          })
+          });
         } catch (error) {
           reject(error);
         }
-      }
-      connection ? innerFunc() : reject(serverError)
-    }
+      };
+      connection ? innerFunc() : reject(serverError);
+    };
     return new Promise(func);
   },
 
   createMovieCard: (obj, isOMDB) => {
-
     const func = (resolve, reject) => {
       const innerFunc = async () => {
         const card = await new MovieCard(obj, isOMDB);
         const result = card.getCard();
         resolve(result);
-      }
+      };
       connection ? innerFunc() : reject(serverError);
-    }
+    };
     return new Promise(func);
   },
 
   saveToDatabase: (article) => {
     const func = (resolve, reject) => {
-
-      const innerFunc = async() => {
+      const innerFunc = async () => {
         const title = 'title';
         const releaseYear = Number(article.Year);
-        const catID = await getID('categories', title, article.Type).catch(error);
-        const formatIDs = await getIDs('formats', title, article.Formats).catch(error);
-        const genreIDs = await getIDs('genres', title, article.Genre).catch(error);
-        const countryIDs = await getIDs('countries', title, article.Country).catch(error);
-        const subIDs = await getIDs('subtitles', title, article.Subs).catch(error);
+        const catID = await getID('categories', title, article.Type).catch(
+          error
+        );
+        const formatIDs = await getIDs('formats', title, article.Formats).catch(
+          error
+        );
+        const genreIDs = await getIDs('genres', title, article.Genre).catch(
+          error
+        );
+        const countryIDs = await getIDs(
+          'countries',
+          title,
+          article.Country
+        ).catch(error);
+        const subIDs = await getIDs('subtitles', title, article.Subs).catch(
+          error
+        );
         const validSubIDs = subIDs.map((e) => {
           if (e < 1 || e > 2) {
             return 3;
           }
           return e;
-        })
-        
+        });
+
         const valueArr = [
-          catID, article.Title, releaseYear,
-          countryIDs[0], countryIDs[1],
-          validSubIDs[0], validSubIDs[1],
-          genreIDs[0], genreIDs[1],
-          formatIDs[0], formatIDs[1]
+          catID,
+          article.Title,
+          releaseYear,
+          countryIDs[0],
+          countryIDs[1],
+          validSubIDs[0],
+          validSubIDs[1],
+          genreIDs[0],
+          genreIDs[1],
+          formatIDs[0],
+          formatIDs[1],
         ];
 
-        console.log(valueArr)
+        console.log(valueArr);
         const marks = '?, '.repeat(10) + '?';
-        
-        const sql = `INSERT INTO movies ` +
-                    `(category, name, release_year, country_of_origin, country_of_origin_2,` +
-                    `subtitle, subtitle_2, genre, genre_2, format, format_2)` +
-                    `VALUES ( ${marks} )`;
+
+        const sql =
+          `INSERT INTO movies ` +
+          `(category, name, release_year, country_of_origin, country_of_origin_2,` +
+          `subtitle, subtitle_2, genre, genre_2, format, format_2)` +
+          `VALUES ( ${marks} )`;
         try {
           connection.query(sql, valueArr, (err, res) => {
-            err ? 
-              reject(status.userErr + ' - Invalid value, could not save movie')
+            err
+              ? reject(
+                  status.userErr + ' - Invalid value, could not save movie'
+                )
               : resolve(res.insertId);
           });
         } catch (error) {
-          reject(status.userErr + ' - Invalid value, movie was not saved.\n' + error);
-          
+          reject(
+            status.userErr + ' - Invalid value, movie was not saved.\n' + error
+          );
         }
         resolve(article);
-      }
+      };
 
       connection ? innerFunc() : reject(serverError);
-    }
+    };
     return new Promise(func);
-  }, 
+  },
 
   getItemId: (table, col, item) => {
-    const func = async(resolve, reject) => {
-      const sql = `SELECT id FROM ${table} WHERE ${col} = ?`
+    const func = async (resolve, reject) => {
+      const sql = `SELECT id FROM ${table} WHERE ${col} = ?`;
 
       const success = (result) => {
-        result.length > 0 
-        ? resolve(JSON.parse(JSON.stringify(result)))
-        : reject(status.notFound + ' - not found.');
-      }
+        result.length > 0
+          ? resolve(JSON.parse(JSON.stringify(result)))
+          : reject(status.notFound + ' - not found.');
+      };
 
       const innerFunc = () => {
         try {
           connection.query(sql, item, (err, res) => {
             err ? reject(err) : success(res);
-          })
+          });
         } catch (error) {
           reject(error);
         }
-      }
+      };
 
       connection ? innerFunc() : reject(serverError);
-    }
+    };
     return new Promise(func);
-  }, 
+  },
 
   saveNewItem: (table, col, item) => {
-
-    const sql = `INSERT INTO ${table} (${col}) VALUES ( ? );`
+    const sql = `INSERT INTO ${table} (${col}) VALUES ( ? );`;
     const func = (resolve, reject) => {
       const innerFunc = async () => {
         const success = (res) => {
           resolve(res.insertId);
-        }
+        };
         try {
           connection.query(sql, item, (err, res) => {
             err ? reject(status.userErr + ' - Invalid input.') : success(res);
-          })
-          
+          });
         } catch (error) {
-          reject(status.userErr + ' - something went wrong with item save. Invalid value.')
+          reject(
+            status.userErr +
+              ' - something went wrong with item save. Invalid value.'
+          );
         }
-      }
+      };
       connection ? innerFunc() : reject(serverError);
-    }
+    };
     return new Promise(func);
   },
 
   getInsertFromDB: (title, year) => {
-    
     const sql = `SELECT * FROM movies WHERE name = ? AND release_year = ?`;
 
     const func = (resolve, reject) => {
@@ -249,27 +274,27 @@ const connectionFunctions = {
         } else {
           resolve(res);
         }
-      }
+      };
       const innerFunc = () => {
-
         try {
           connection.query(sql, [title, year], (err, res) => {
             console.log(JSON.parse(JSON.stringify(res)));
-            err ? reject(status.notFound + ' - insert not found. ') : hasData(res);
+            err
+              ? reject(status.notFound + ' - insert not found. ')
+              : hasData(res);
           });
         } catch (error) {
           reject(status.userErr + ' - Invalid input, could not retrieve data.');
         }
-      }
+      };
       connection ? innerFunc() : reject(serverError);
-    }
+    };
     return new Promise(func);
   },
 
   // getInsertFromDBByTitle: (title) => {
   //   const sql =s
   // }
-
-}
+};
 
 module.exports = connectionFunctions;
