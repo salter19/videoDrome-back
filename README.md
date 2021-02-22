@@ -1,2 +1,2 @@
 # videoDrome-back
-private project, backend side
+My little project, video database for our films etc., backend side
