@@ -57,7 +57,6 @@ CREATE TABLE `movies` (
   `release_year` integer NOT NULL,
   `country_of_origin` integer NOT NULL,
   `country_of_origin_2` integer,
-  `distributor` integer NOT NULL,
   `subtitle` integer NOT NULL,
   `subtitle_2` integer,
   `genre` integer NOT NULL,
@@ -89,3 +88,6 @@ ALTER TABLE `movies` ADD FOREIGN KEY (`genre_2`) REFERENCES `genres` (`id`);
 ALTER TABLE `movies` ADD FOREIGN KEY (`format_1`) REFERENCES `formats` (`id`);
 
 ALTER TABLE `movies` ADD FOREIGN KEY (`format_2`) REFERENCES `formats` (`id`);
+
+DROP TABLE IF EXISTS crew_members, movies, genres;
+

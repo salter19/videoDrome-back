@@ -1,5 +1,28 @@
 {
   "devDependencies": {
-    "eslint": "^7.17.0"
+    "eslint": "^7.17.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "gzip": "^0.1.0",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1",
+    "node-gzip": "^1.1.2",
+    "nodemon": "^2.0.6",
+    "path": "^0.12.7"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "eslint": "node node-modules/eslint/bin/eslint *.js",
+    "fix": "node node-modules/eslint/bin/eslint *.js --fix"
   }
 }
