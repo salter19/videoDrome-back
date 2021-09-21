@@ -13,14 +13,18 @@ const status = {
 
 const baseUrl = `http://www.omdbapi.com/?apikey=${config.omdbApi}`
 
-const connectOMDB = {
 
+const connectOMDB = {
+  
   connect: (title, year) => {
     const func = async (resolve, reject) => {
       try {     
+        console.log(`here with title ${title} and ${year}`);
         const _url = baseUrl + `&t=${title}&y=${year}`;
         const response = await axios.get(_url);
         const data = await response.data;
+
+        console.log(data)
         resolve(data);
 
       } catch (error) {
@@ -32,7 +36,9 @@ const connectOMDB = {
 
   connectTitle: (title) => {
     const func = async (resolve, reject) => {
+      console.log(`here with title ${title}`);
       try {
+        console.log(title);
         const _url = baseUrl + `&t=${title}`;
         const response = await axios.get(_url);
         const data = await response.data;

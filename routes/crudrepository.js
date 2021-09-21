@@ -19,11 +19,15 @@ const status = {
 
 const serverError = status.serverErr + ' - no connection.';
 
+// ---- helper functions ----
+
+// get item id
 const getID = async(table, col, item) => {
   const id = await connectionFunctions.getItemId(table, col, item);
   return id[0].id; 
 }
 
+// get multiple item ids
 const getIDs = async(table, col, items) => {
 
   if (typeof items === 'string') {
@@ -47,6 +51,7 @@ const getIDs = async(table, col, items) => {
   return arr;
 };
 
+// map array for getIDs
 const mapArr = async (arr, table, col) => {
 
   const res = [];
@@ -70,13 +75,17 @@ const mapArr = async (arr, table, col) => {
   return res;
 };
 
+// ---- THE OBJECT FOR CONNECTION ----
 const connectionFunctions = {
 
   connect: () => {
+
     const func = async (resolve, reject) => {
+
       const openConnection = () => {
         try {
-          connection = mysql.createPool(config);
+          // connection = mysql.createPool(config);
+          connection = mysql.createConnection(config);
           resolve(status.created + ' - Connection created succesfully');
         } catch (error) {
           reject(status.serverErr + ' - Something went wrong with the connection.');
@@ -88,6 +97,7 @@ const connectionFunctions = {
       } catch (error) {
         reject(status.serverErr + ` - No connection.`);
       }
+
     }
     return new Promise(func)
   },
@@ -104,6 +114,21 @@ const connectionFunctions = {
     return new Promise(func);
   },
 
+  // convert to OMDB from DB or vice versa
+  createMovieCard: (obj, isOMDB) => {
+
+    const func = (resolve, reject) => {
+      const innerFunc = async () => {
+        const card = await new MovieCard(obj, isOMDB);
+        const result = card.getCard();
+        resolve(result);
+      }
+      connection ? innerFunc() : reject(serverError);
+    }
+    return new Promise(func);
+  },
+
+  // get all
   findAllCategories: () => {
     const func = (resolve, reject) => {
       const innerFunc = async () => {
@@ -127,19 +152,63 @@ const connectionFunctions = {
     return new Promise(func);
   },
 
-  createMovieCard: (obj, isOMDB) => {
+  findMovieByTitleFromDB: (title) => {
 
     const func = (resolve, reject) => {
-      const innerFunc = async () => {
-        const card = await new MovieCard(obj, isOMDB);
-        const result = card.getCard();
-        resolve(result);
+
+      sql = `SELECT * FROM movies WHERE name = ?`
+
+      const success = (result) => {
+        result.length > 0
+        ? resolve(JSON.parse(JSON.stringify(result)))
+        : reject(status.notFound + ' - not found.');
       }
+
+      const innerFunc = async () => {
+
+        try {
+          connection.query(sql, title, (err, res) => {
+            err ? reject(err) : success(res);
+          })
+        } catch (error) {
+          reject(error);
+        }
+      }
+
       connection ? innerFunc() : reject(serverError);
     }
     return new Promise(func);
   },
 
+  findMovieByTitleAndYearFromDB: (title, year) => {
+
+    const func = (resolve, reject) => {
+
+      sql = `SELECT * FROM movies WHERE name = ? AND release_year = ?`
+
+      const success = (result) => {
+        result.length > 0
+        ? resolve(JSON.parse(JSON.stringify(result)))
+        : reject(status.notFound + ' - not found.');
+      }
+
+      const innerFunc = async () => {
+
+        try {
+          connection.query(sql, [title, year], (err, res) => {
+            err ? reject(err) : success(res);
+          })
+        } catch (error) {
+          reject(error);
+        }
+      }
+
+      connection ? innerFunc() : reject(serverError);
+    }
+    return new Promise(func);
+  },
+
+  // save a movie to DB
   saveToDatabase: (article) => {
 
     const func = (resolve, reject) => {
@@ -191,6 +260,7 @@ const connectionFunctions = {
     return new Promise(func);
   }, 
 
+  // get item id from given table and under a given column
   getItemId: (table, col, item) => {
     const func = async(resolve, reject) => {
       const sql = `SELECT id FROM ${table} WHERE ${col} = ?`
@@ -216,6 +286,7 @@ const connectionFunctions = {
     return new Promise(func);
   }, 
 
+  // save given item into DB
   saveNewItem: (table, col, item) => {
 
     const sql = `INSERT INTO ${table} (${col}) VALUES ( ? );`

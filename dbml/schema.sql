@@ -65,8 +65,6 @@ CREATE TABLE `movies` (
   `format_2` integer
 );
 
-ALTER TABLE `crew_members` ADD FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`);
-
 ALTER TABLE `crew_members` ADD FOREIGN KEY (`crew_title`) REFERENCES `crew_titles` (`id`);
 
 ALTER TABLE `movies` ADD FOREIGN KEY (`category`) REFERENCES `categories` (`id`);

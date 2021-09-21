@@ -30,7 +30,7 @@ CREATE TABLE formats (
 INSERT INTO formats (title)
 VALUES    
   ('dvd')
-  , ('blueray')
+  , ('blu-ray')
   , ('vhs')
 ;
 

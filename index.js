@@ -14,7 +14,8 @@ APP.use('/movieDB', ROUTER);
 
 const server = APP.listen(port, async () => {
   try {
-    await DB.connect();
+    res = await DB.connect();
+    console.log(res)
     console.log(`Listening on port ${server.address().port}`);
     
   } catch (err) {

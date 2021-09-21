@@ -25,6 +25,8 @@ const createCard = async(result) => {
   }
 }
 
+// ---- DB getters ----
+
 // get all category entries from database
 router.get('/categories/', async (req, res) => {
   try {
@@ -36,8 +38,43 @@ router.get('/categories/', async (req, res) => {
 });
 
 
+// get movie by title from database
+router.get(`/:title([A-Za-z0-9_%]+)/`, async(req, res) => {
+  try {
+    title = req.params.title
+    console.log(`about to search ${title} from DB`);
+    const result = await DB.findMovieByTitleFromDB(title);
+    console.log(result)
+    res.send(result);
+
+  } catch (error) {
+
+    console.log(`about to search ${title}/${year} from DB`);
+    res.send(error)
+  }
+});
+
+// get movie by title and year from database
+router.get(`/:title([A-Za-z0-9_%]+)/:year([0-9]+)`, async(req, res) => {
+  try {
+    title = req.params.title
+    year = req.params.year
+    const result = await DB.findMovieByTitleAndYearFromDB(title, year);
+    console.log(`${title} from ${year}`);
+    console.log(result);
+    res.send(result);
+
+  } catch (error) {
+
+    console.log(`about to search ${title}/${year} from DB`);
+    res.send(error)
+  }
+});
+
+// ---- OMDB getters ----
 router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
   try {
+    console.log("in the router")
     const result = await omdb.connectTitle(req.params.title);
     const card = await createCard(result);
     res.send(card);
@@ -57,6 +94,7 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   }
 });
 
+// ---- Post to DB ----
 router.post('/', async(req, res) => {
   try {
     const result = await DB.saveToDatabase(req.body);
