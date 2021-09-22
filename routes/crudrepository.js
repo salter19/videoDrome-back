@@ -155,8 +155,8 @@ const connectionFunctions = {
   findMovieByTitleFromDB: (title) => {
 
     const func = (resolve, reject) => {
-
-      sql = `SELECT * FROM movies WHERE name = ?`
+      const _title = `%${title}%`;
+      sql = `SELECT * FROM movies WHERE name LIKE ?`;
 
       const success = (result) => {
         result.length > 0
@@ -167,7 +167,7 @@ const connectionFunctions = {
       const innerFunc = async () => {
 
         try {
-          connection.query(sql, title, (err, res) => {
+          connection.query(sql, _title, (err, res) => {
             err ? reject(err) : success(res);
           })
         } catch (error) {
@@ -184,7 +184,8 @@ const connectionFunctions = {
 
     const func = (resolve, reject) => {
 
-      sql = `SELECT * FROM movies WHERE name = ? AND release_year = ?`
+      const _title = `%${title}%`
+      sql = `SELECT * FROM movies WHERE name LIKE ? AND release_year = ?`;
 
       const success = (result) => {
         result.length > 0
@@ -195,7 +196,7 @@ const connectionFunctions = {
       const innerFunc = async () => {
 
         try {
-          connection.query(sql, [title, year], (err, res) => {
+          connection.query(sql, [_title, year], (err, res) => {
             err ? reject(err) : success(res);
           })
         } catch (error) {

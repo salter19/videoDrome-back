@@ -48,8 +48,6 @@ router.get(`/:title([A-Za-z0-9_%]+)/`, async(req, res) => {
     res.send(result);
 
   } catch (error) {
-
-    console.log(`about to search ${title}/${year} from DB`);
     res.send(error)
   }
 });
@@ -65,8 +63,6 @@ router.get(`/:title([A-Za-z0-9_%]+)/:year([0-9]+)`, async(req, res) => {
     res.send(result);
 
   } catch (error) {
-
-    console.log(`about to search ${title}/${year} from DB`);
     res.send(error)
   }
 });

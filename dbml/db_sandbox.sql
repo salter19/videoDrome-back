@@ -45,7 +45,7 @@ VALUES
 
 INSERT INTO movies(category, name, release_year, country_of_origin, subtitle, genre, genre_2, format_1)
 VALUES
-    (1, 'Matrix', 1999, 2, 1, 6, 3, 3)
+    (1, 'The Matrix Reloaded', 2003, 2, 1, 6, 3, 1)
 ;
 
 -- ALTER TABLE table DROP FOREIGN KEY constraint_name;
