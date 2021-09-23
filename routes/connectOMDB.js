@@ -36,11 +36,13 @@ const connectOMDB = {
 
   connectTitle: (title) => {
     const func = async (resolve, reject) => {
-      console.log(`here with title ${title}`);
+      console.log(`in connectTitle with title ${title}`);
       try {
         const _url = baseUrl + `&t=${title}`;
         const response = await axios.get(_url);
         const data = await response.data;
+
+        console.log(data)
 
         resolve(data);
       } catch (error) {
