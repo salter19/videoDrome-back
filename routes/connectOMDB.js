@@ -38,7 +38,6 @@ const connectOMDB = {
     const func = async (resolve, reject) => {
       console.log(`here with title ${title}`);
       try {
-        console.log(title);
         const _url = baseUrl + `&t=${title}`;
         const response = await axios.get(_url);
         const data = await response.data;
