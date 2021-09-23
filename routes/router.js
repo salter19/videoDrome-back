@@ -107,7 +107,7 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
     res.send(card);
     
   } catch (error) {
-    res.send(`${error_msg.server_err}\n${error}`;
+    res.send(`${error_msg.server_err}\n${error}`);
   }
 });
 
