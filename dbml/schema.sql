@@ -2,6 +2,7 @@
 -- Database: MySQL
 -- Generated at: 2021-01-02T10:57:01.434Z
 
+
 DROP TABLE IF EXITS categories, formats, genres, subtitles
                     , crew_titles, crew_members, countries
                     , distributors, movies;

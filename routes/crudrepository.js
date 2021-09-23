@@ -1,4 +1,5 @@
 const { error } = require('console');
+const { query } = require('express');
 const mysql = require('mysql');
 const path = require('path');
 const config = require(path.join(__dirname, './../dbml/config.js'));
@@ -214,18 +215,21 @@ const connectionFunctions = {
   },
 
   // save a movie to DB
-  saveToDatabase: (article) => {
+  saveToDatabase: (movie) => {
+
+    // TODO: create table items (titles) dynamically from inserted data
+    // NOTE: validate new items: no duplicates allowed, if possible check typos / give suggestions
 
     const func = (resolve, reject) => {
 
       const innerFunc = async() => {
         const title = 'title';
-        const releaseYear = Number(article.year);
-        const catID = await getID('categories', title, article.category).catch(error);
-        const formatIDs = await getIDs('formats', title, article.format).catch(error);
-        const genreIDs = await getIDs('genres', title, article.genres).catch(error);
-        const countryIDs = await getIDs('countries', title, article.country).catch(error);
-        const subIDs = await getIDs('subtitles', title, article.sub).catch(error);
+        const releaseYear = Number(movie.Year);
+        const catID = await getID('categories', title, movie.Type).catch(error);
+        const formatIDs = await getIDs('formats', title, movie.Formats).catch(error);
+        const genreIDs = await getIDs('genres', title, movie.Genre).catch(error);
+        const countryIDs = await getIDs('countries', 'name', movie.Country).catch(error);
+        const subIDs = await getIDs('subtitles', title, movie.Subs).catch(error);
         const validSubIDs = subIDs.map((e) => {
           if (e < 1 || e > 2) {
             return 3;
@@ -233,31 +237,37 @@ const connectionFunctions = {
           return e;
         })
         
-        const valueArr = [
-          catID, article.name, releaseYear,
-          countryIDs[0], countryIDs[1],
-          subIDs[0], subIDs[1],
-          genreIDs[0], genreIDs[1],
-          formatIDs[0], formatIDs[1]
-        ];
+        const valuesToPost = {
+          category: catID, 
+          name: movie.Title, 
+          release_year: releaseYear,
+          country_of_origin: countryIDs[0], 
+          country_of_origin_2: countryIDs[1],
+          subtitle: subIDs[0], 
+          subtitle_2: subIDs[1],
+          genre: genreIDs[0], 
+          genre_2: genreIDs[1],
+          format_1: formatIDs[0], 
+          format_2: formatIDs[1]
+        };
+
         const marks = '?, '.repeat(10) + '?';
         
-        const sql = `INSERT INTO movies ` +
-                    `(category, name, release_year, country_of_origin, country_of_origin_2,` +
-                    `subtitle, subtitle_2, genre, genre_2, format, format_2)` +
-                    `VALUES ( ${marks} )`;
+        const sql = `INSERT INTO movies SET ?`;
+
         try {
-          connection.query(sql, valueArr, (err, res) => {
+          const query = connection.query(sql, valuesToPost, (err, res) => {
             err ? 
               reject(status.userErr + ' - Invalid value, could not save movie')
               : resolve(res.insertId);
           });
+
         } catch (error) {
           reject(status.userErr + ' - Invalid value, movie was not saved.\n' + error);
           
         }
-        console.log(validSubIDs)
-        resolve(article);
+        
+        resolve(movie);
       }
 
       connection ? innerFunc() : reject(serverError);
@@ -268,7 +278,7 @@ const connectionFunctions = {
   // get item id from given table and under a given column
   getItemId: (table, col, item) => {
     const func = async(resolve, reject) => {
-      const sql = `SELECT id FROM ${table} WHERE ${col} = ?`
+      const sql = `SELECT id FROM ${table} WHERE ${col} = ?`;
 
       const success = (result) => {
         result.length > 0 

@@ -45,7 +45,6 @@ router.get('/categories/', async (req, res) => {
   }
 });
 
-
 // get movie by title from database
 router.get(`/:title([A-Za-z0-9_%]+)/`, async(req, res) => {
   try {
@@ -114,9 +113,9 @@ router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
 // ---- Post to DB ----
 router.post('/', async(req, res) => {
   try {
-    const result = await DB.saveToDatabase(req.body);
 
-    console.log(result)
+    // send movie data to be posted on the server
+    const result = await DB.saveToDatabase(req.body);
 
     result ? res.send('201 - created!') : res.send(error_msg.unknown_err);
     
