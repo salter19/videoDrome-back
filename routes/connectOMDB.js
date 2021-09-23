@@ -19,11 +19,11 @@ const connectOMDB = {
   connect: (title, year) => {
     const func = async (resolve, reject) => {
       try {     
-        console.log(`here with title ${title} and ${year}`);
         const _url = baseUrl + `&t=${title}&y=${year}`;
         const response = await axios.get(_url);
         const data = await response.data;
 
+        console.log(`In connectOMDB with ${data.Title} and ${data.Year}`);
         console.log(data)
         resolve(data);
 

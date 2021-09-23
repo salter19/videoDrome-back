@@ -7,8 +7,14 @@ const omdb = require(path.join(__dirname, './connectOMDB.js'));
 const router = EXPRESS.Router();
 router.use(EXPRESS.json());
 
-// helper func for cardCreation
-const createCard = async(result) => {
+const error_msg = {
+  server_err: '500 - database not found',
+  unknown_err: '400 - invalid input, something went wrong', 
+  not_found_err: '404 - movie not found'
+};
+
+// helper func for card creation regarding OMDB results
+const createCardFromOMDBItem = async(result) => {
 
   if (result.Title) {
     result.Subs = '-';
@@ -17,11 +23,12 @@ const createCard = async(result) => {
     try {   
       const movieCard = await DB.createMovieCard(result, true);
       return movieCard;
+
     } catch (error) {
-      return '404 - movie not found';
+      return error_msg.unknown_err;
     }
   } else {
-    return '404 - movie not found';
+    return error_msg.not_found_err;
   }
 }
 
@@ -32,8 +39,9 @@ router.get('/categories/', async (req, res) => {
   try {
     const result = await DB.findAllCategories();
     res.send(result);
+
   } catch (error) {
-    res.send(error + 'could not fetch categories');
+    res.send(`${error_msg.server_err}\n${error}`);
   }
 });
 
@@ -41,52 +49,65 @@ router.get('/categories/', async (req, res) => {
 // get movie by title from database
 router.get(`/:title([A-Za-z0-9_%]+)/`, async(req, res) => {
   try {
-    title = req.params.title
-    console.log(`about to search ${title} from DB`);
-    const result = await DB.findMovieByTitleFromDB(title);
-    console.log(result)
+
+    // check local database
+    const result = await DB.findMovieByTitleFromDB(req.params.title);
+
+    // return result
     res.send(result);
 
   } catch (error) {
-    res.send(error)
+
+    // if connection fails, return error msg
+    res.send(`${error_msg.server_err}\n${error}`)
   }
 });
 
 // get movie by title and year from database
 router.get(`/:title([A-Za-z0-9_%]+)/:year([0-9]+)`, async(req, res) => {
   try {
-    title = req.params.title
-    year = req.params.year
-    const result = await DB.findMovieByTitleAndYearFromDB(title, year);
-    console.log(`${title} from ${year}`);
-    console.log(result);
+
+    // check local database
+    const result = await DB.findMovieByTitleAndYearFromDB(req.params.title, req.params.year);
+
+    // send result
     res.send(result);
 
   } catch (error) {
-    res.send(error)
+    res.send(`${error_msg.server_err}\n${error}`)
   }
 });
 
 // ---- OMDB getters ----
+// get with title
 router.get(`/omdb/:title([A-Za-z0-9_%]+)`, async(req, res) => {
   try {
-    console.log("in the router")
     const result = await omdb.connectTitle(req.params.title);
-    const card = await createCard(result);
+
+    // convert result into movie card for future handling
+    const card = await createCardFromOMDBItem(result);
+
+    // return movie card
     res.send(card);
 
   } catch (error) {
-    res.send(error);
+    res.send(`${error_msg.server_err}\n${error}`);
   }
 });
 
+// get with title and year
 router.get('/omdb/:title([A-Za-z0-9_%]+)/:year([0-9]+)', async(req, res) => {
   try {
     const result = await omdb.connect(req.params.title, req.params.year);
-    const card = await createCard(res, result);
+
+    // convert result into movie card for future handling
+    const card = await createCardFromOMDBItem(result);
+
+    // return movie card
     res.send(card);
+    
   } catch (error) {
-    res.send(error);
+    res.send(`${error_msg.server_err}\n${error}`;
   }
 });
 
@@ -96,10 +117,11 @@ router.post('/', async(req, res) => {
     const result = await DB.saveToDatabase(req.body);
 
     console.log(result)
-    result ? res.send('201 - created!') : res.send('500 - error occured');
+
+    result ? res.send('201 - created!') : res.send(error_msg.unknown_err);
     
   } catch (error) {
-    res.send(error);
+    res.send(`${error_msg.server_err}\n${error}`);
   }
 });
 

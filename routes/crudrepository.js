@@ -154,6 +154,8 @@ const connectionFunctions = {
 
   findMovieByTitleFromDB: (title) => {
 
+    // TODO: decode result into readable format
+    
     const func = (resolve, reject) => {
       const _title = `%${title}%`;
       sql = `SELECT * FROM movies WHERE name LIKE ?`;
@@ -181,6 +183,8 @@ const connectionFunctions = {
   },
 
   findMovieByTitleAndYearFromDB: (title, year) => {
+
+    // TODO: decode result into readable format
 
     const func = (resolve, reject) => {
 
